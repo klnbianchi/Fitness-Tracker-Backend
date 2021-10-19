@@ -1,13 +1,13 @@
 // require and re-export all files in this db directory (users, activities...)
-const { client } = require('./client');
-const { rebuildDB } = require('./seedData')
+// const { client } = require('./client');
+// const { rebuildDB } = require('./seedData')
 
-client.connect()
-    .then(rebuildDB)
-    .catch(console.error)
-    .finally(() => client.end());
+// client.connect()
+//     .then(rebuildDB)
+//     .catch(console.error)
+//     .finally(() => client.end());
 
-module.exports = {
-    client,
-    rebuildDB
-}
+// module.exports = {
+//     client,
+//     rebuildDB
+// }

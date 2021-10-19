@@ -5,6 +5,12 @@ const client = require('./client');
 async function dropTables() {
   console.log('Dropping All Tables...');
   // drop all tables, in the correct order
+  client.query(`
+  DROP TABLE IF EXISTS users;
+  DROP TABLE IF EXISTS activities;
+  DROP TABLE IF EXISTS routines;
+  DROP TABLE IF EXISTS routineActivities;
+`);
 
 }
 
