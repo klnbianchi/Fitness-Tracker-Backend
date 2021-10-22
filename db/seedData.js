@@ -2,10 +2,16 @@
 const client = require('./client')
 
 const {
+<<<<<<< HEAD
+  client,
+  
+} = require('./client');
+=======
   createUser,
   getUser
 } = require('./')
 
+>>>>>>> fd583364c73a50f990abeb68a4724fb72dc61921
 
 
 
