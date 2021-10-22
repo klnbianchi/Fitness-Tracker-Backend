@@ -2,7 +2,7 @@
 const {
   client,
   
-} = require('./');
+} = require('./client');
 
 
 
@@ -44,7 +44,7 @@ description TEXT NOT NULL
 
     CREATE TABLE routines(
 id SERIAL PRIMARY KEY,
-"creatorId" INTEGER FOREIGN KEY,
+"creatorId" INTEGER REFERENCES users(id),
 "isPublic" BOOLEAN DEFAULT false,
 name VARCHAR(255) UNIQUE NOT NULL,
 goal TEXT NOT NULL
@@ -52,8 +52,8 @@ goal TEXT NOT NULL
 
     CREATE TABLE routineActivities(
 id SERIAL PRIMARY KEY,
-"routineId" INTEGER FOREIGN KEY,
-"activityId" INTEGER FOREIGN KEY,
+"routineId" INTEGER REFERENCES routines(id),
+"activityId" INTEGER REFERENCES activities(id),
 duration INTEGER,
 count INTEGER,
 UNIQUE ("routineId", "activityId")
