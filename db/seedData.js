@@ -1,8 +1,11 @@
 // require in the database adapter functions as you write them (createUser, createActivity...)
+const client = require('./client')
+
 const {
-  client,
-  
-} = require('./');
+  createUser,
+  getUser
+} = require('./')
+
 
 
 
@@ -11,13 +14,13 @@ async function dropTables() {
   try {
     console.log('Dropping All Tables...');
     // drop all tables, in the correct order
-    client.query(`
-    DROP TABLE IF EXISTS users;
-    DROP TABLE IF EXISTS activities;
-    DROP TABLE IF EXISTS routines;
+    await client.query(`
     DROP TABLE IF EXISTS routineActivities;
+    DROP TABLE IF EXISTS routines;
+    DROP TABLE IF EXISTS activities;
+    DROP TABLE IF EXISTS users;
   `);
-
+console.log('Finishing dropping tables!')
   } catch (error) {
     console.error('Error while dropping tables');
     throw error;
@@ -44,7 +47,7 @@ description TEXT NOT NULL
 
     CREATE TABLE routines(
 id SERIAL PRIMARY KEY,
-"creatorId" INTEGER FOREIGN KEY,
+"creatorId" INTEGER REFERENCES users(id),
 "isPublic" BOOLEAN DEFAULT false,
 name VARCHAR(255) UNIQUE NOT NULL,
 goal TEXT NOT NULL
@@ -52,8 +55,8 @@ goal TEXT NOT NULL
 
     CREATE TABLE routineActivities(
 id SERIAL PRIMARY KEY,
-"routineId" INTEGER FOREIGN KEY,
-"activityId" INTEGER FOREIGN KEY,
+"routineId" INTEGER REFERENCES routines(id),
+"activityId" INTEGER REFERENCES activities(id),
 duration INTEGER,
 count INTEGER,
 UNIQUE ("routineId", "activityId")
@@ -214,9 +217,9 @@ async function rebuildDB() {
     await dropTables();
     await createTables();
     await createInitialUsers();
-    await createInitialActivities();
-    await createInitialRoutines();
-    await createInitialRoutineActivities();
+    // await createInitialActivities();
+    // await createInitialRoutines();
+    // await createInitialRoutineActivities();
   } catch (error) {
     console.log('Error during rebuildDB')
     throw error;
