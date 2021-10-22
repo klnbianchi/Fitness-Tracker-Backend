@@ -1,8 +1,17 @@
 // require in the database adapter functions as you write them (createUser, createActivity...)
+const client = require('./client')
+
 const {
+<<<<<<< HEAD
   client,
   
 } = require('./client');
+=======
+  createUser,
+  getUser
+} = require('./')
+
+>>>>>>> fd583364c73a50f990abeb68a4724fb72dc61921
 
 
 
@@ -11,13 +20,13 @@ async function dropTables() {
   try {
     console.log('Dropping All Tables...');
     // drop all tables, in the correct order
-    client.query(`
-    DROP TABLE IF EXISTS users;
-    DROP TABLE IF EXISTS activities;
-    DROP TABLE IF EXISTS routines;
+    await client.query(`
     DROP TABLE IF EXISTS routineActivities;
+    DROP TABLE IF EXISTS routines;
+    DROP TABLE IF EXISTS activities;
+    DROP TABLE IF EXISTS users;
   `);
-
+console.log('Finishing dropping tables!')
   } catch (error) {
     console.error('Error while dropping tables');
     throw error;
@@ -214,9 +223,9 @@ async function rebuildDB() {
     await dropTables();
     await createTables();
     await createInitialUsers();
-    await createInitialActivities();
-    await createInitialRoutines();
-    await createInitialRoutineActivities();
+    // await createInitialActivities();
+    // await createInitialRoutines();
+    // await createInitialRoutineActivities();
   } catch (error) {
     console.log('Error during rebuildDB')
     throw error;

@@ -16,7 +16,7 @@ server.use(cors());
 const apiRouter = require("./api");
 server.use("/api", apiRouter);
 
-const {client} = require("./db/index.js");
+const client = require("./db/client");
 
 server.use(function (req,res,next){
     res.status(404).send('Unable to find the requested resource!')
@@ -28,8 +28,7 @@ server.use(function (err,req,res,next){
 
 
 server.listen(PORT, ()=>{
-
+    client.connect();
     console.log("The server is up on port", PORT);
 })
 
-client.connect();
