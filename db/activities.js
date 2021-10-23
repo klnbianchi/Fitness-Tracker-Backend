@@ -56,7 +56,9 @@ UPDATE activities
 SET name = $1,description = $2
 WHERE "id" = ${id}
 RETURNING *;
+
 `,[name,description] );
+
 
         return updatedActivity;
     } catch (error) {
@@ -64,4 +66,6 @@ RETURNING *;
     }
 }
 
+
 module.exports = {  updateActivity, getActivityById, getAllActivities, createActivity };
+
