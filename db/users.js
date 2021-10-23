@@ -38,7 +38,7 @@ async function getUser({ username, password }) {
   try {
     const user = await getUserByUserName(username);
     const hashedPassword = user.password;
-console.log (user, "user!!!!!")
+
     const compare = await bcrypt.compare(
       password,
       hashedPassword,);
