@@ -64,4 +64,33 @@ RETURNING *;
     }
 }
 
-module.exports = {  updateActivity, getActivityById, getAllActivities, createActivity };
+async function attachActivitiesToRoutines(routines) {
+    // no side effects
+    const routinesToReturn = [...routines];
+    const binds = routines.map((_, index) => `$${index + 1}`).join(', ');
+    const routineIds = routines.map(routine => routine.id);
+    if (!routineIds?.length) return;
+   
+    try {
+      // get the activities, JOIN with routine_activities (so we can get a routineId), and only those that have those routine ids on the routine_activities join
+      const { rows: activities } = await client.query(`
+        SELECT activities.*, routineActivities.duration, routineActivities.count, routineActivities.id AS "routineActivityId", routineActivities."routineId"
+        FROM activities 
+        JOIN routineActivities ON routineActivities."activityId" = activities.id
+        WHERE routineActivities."routineId" IN (${ binds });
+      `, routineIds);
+  console.log (activities, "!!!!!!!!")
+      // loop over the routines
+      for(const routine of routinesToReturn) {
+        // filter the activities to only include those that have this routineId
+        const activitiesToAdd = activities.filter(activity => activity.routineId === routine.id);
+        // attach the activities to each single routine
+        routine.activities = activitiesToAdd;
+      }
+      return routinesToReturn;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+module.exports = {  updateActivity, getActivityById, getAllActivities, createActivity, attachActivitiesToRoutines };

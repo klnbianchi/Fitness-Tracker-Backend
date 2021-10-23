@@ -9,7 +9,9 @@ const {
   getUserById,
   createActivity,
   createRoutine,
-
+  addActivityToRoutine,
+  getAllActivities,
+  getRoutinesWithoutActivities
 } = require('./')
 
 
@@ -225,7 +227,7 @@ async function rebuildDB() {
     await createInitialUsers();
     await createInitialActivities();
     await createInitialRoutines();
-    // await createInitialRoutineActivities();
+    await createInitialRoutineActivities();
   } catch (error) {
     console.log('Error during rebuildDB')
     throw error;
