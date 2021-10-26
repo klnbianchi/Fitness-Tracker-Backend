@@ -37,6 +37,7 @@ FROM routines;
   }
 }
 
+
 // -getAllRoutines
 // select and return an array of all routines, include their activities
 // async function getAllRoutines() {
