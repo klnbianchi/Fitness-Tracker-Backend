@@ -81,7 +81,7 @@ async function attachActivitiesToRoutines(routines) {
         JOIN routineActivities ON routineActivities."activityId" = activities.id
         WHERE routineActivities."routineId" IN (${ binds });
       `, routineIds);
-  console.log (activities, "!!!!!!!!")
+  
       // loop over the routines
       for(const routine of routinesToReturn) {
         // filter the activities to only include those that have this routineId

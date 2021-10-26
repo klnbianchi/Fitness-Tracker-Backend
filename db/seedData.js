@@ -16,10 +16,6 @@ const {
 } = require('./')
 
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 86c5c0d82f8fa605cf4bb55b80328e3ea15ea620
 
 
 
@@ -231,14 +227,9 @@ async function rebuildDB() {
     await createTables();
     await createInitialUsers();
     await createInitialActivities();
-<<<<<<< HEAD
-    await createInitialRoutines();
-    // await createInitialRoutineActivities();
-=======
 
     await createInitialRoutines();
     await createInitialRoutineActivities();
->>>>>>> 86c5c0d82f8fa605cf4bb55b80328e3ea15ea620
   } catch (error) {
     console.log('Error during rebuildDB')
     throw error;

@@ -1,8 +1,6 @@
 const client = require("./client");
 const { attachActivitiesToRoutines } = require("./activities");
-// -getRoutineById
-// getRoutineById(id)
-// return the routine
+
 async function getRoutineById(id) {
   try {
     const {
@@ -22,29 +20,22 @@ WHERE id = $1;
   }
 }
 
-// -getRoutinesWithoutActivities
-// select and return an array of all routines
 async function getRoutinesWithoutActivities() {
   try {
     const { rows: allRoutines } = await client.query(`
 SELECT *
 FROM routines;
 `);
-    console.log(allRoutines);
+
     return allRoutines;
   } catch (error) {
     console.error(error);
   }
 }
 
-
-// -getAllRoutines
-// select and return an array of all routines, include their activities
 async function getAllRoutines() {
   try {
-    const {
-      rows: routines,
-    } = await client.query(`
+    const { rows: routines } = await client.query(`
 SELECT routines.*, users.username AS "creatorName"
 FROM routines
 JOIN users ON routines."creatorId" = users.id;
@@ -56,49 +47,77 @@ JOIN users ON routines."creatorId" = users.id;
   }
 }
 
-// -getAllPublicRoutines
-// select and return an array of public routines, include their activities
 async function getAllPublicRoutines() {
   try {
-    const {
-      rows: publicRoutines,
-    } = await client.query(`
+    const { rows: publicRoutines } = await client.query(`
     SELECT routines.*, users.username AS "creatorName"
     FROM routines
-    WHERE "isPublic" = true
-    JOIN users ON routines."creatorId" = users.id;
+    JOIN users ON routines."creatorId" = users.id
+    WHERE "isPublic" = true;
 `);
-    console.log(publicRoutines, "!!!!!");
+
     return attachActivitiesToRoutines(publicRoutines);
   } catch (error) {
     console.error(error);
   }
 }
-// -getAllRoutinesByUser
-// getAllRoutinesByUser({ username })
-// select and return an array of all routines made by user, include their activities
+
 async function getAllRoutinesByUser({ username }) {
   try {
-    const {
-      rows: [userRoutines],
-    } = await client.query(`
-    
-    `);
+    const { rows: userRoutines } = await client.query(
+      `
+    SELECT routines.*, users.username AS "creatorName"
+    FROM routines
+    JOIN users ON routines."creatorId" = users.id
+    WHERE users.username = $1;
+    `,
+      [username]
+    );
+
+    return attachActivitiesToRoutines(userRoutines);
   } catch (error) {
     console.error(error);
   }
 }
-// -getPublicRoutinesByUser
-// getPublicRoutinesByUser({ username })
-// select and return an array of public routines made by user, include their activities
 
-// -getPublicRoutinesByActivity
-// getPublicRoutinesByActivity({ id })
-// select and return an array of public routines which have a specific activityId in their routine_activities join, include their activities
+async function getPublicRoutinesByUser({ username }) {
+  try {
+    const { rows: publicRoutines } = await client.query(
+      `
+    SELECT routines.*, users.username AS "creatorName"
+    FROM routines
+    JOIN users ON routines."creatorId" = users.id
+    WHERE users.username = $1
+    AND "isPublic" = true;
+    `,
+      [username]
+    );
 
-// -createRoutine
-// createRoutine({ creatorId, isPublic, name, goal })
-// create and return the new routine
+    return attachActivitiesToRoutines(publicRoutines);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function getPublicRoutinesByActivity({ id }) {
+  try {
+    const { rows: routinesByActivity } = await client.query(
+      `
+    SELECT routines.*, users.username AS "creatorName"
+    FROM routines
+    JOIN users ON routines."creatorId" = users.id
+    JOIN routineActivities ON routines.id = routineActivities."routineId"
+    WHERE routineActivities."activityId" = $1
+    AND "isPublic" = true;
+    `,
+      [id]
+    );
+
+    return attachActivitiesToRoutines(routinesByActivity);
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 async function createRoutine({ creatorId, isPublic, name, goal }) {
   try {
@@ -119,24 +138,32 @@ async function createRoutine({ creatorId, isPublic, name, goal }) {
   }
 }
 
-// -updateRoutine
-// updateRoutine({ id, isPublic, name, goal })
-// Find the routine with id equal to the passed in id
-// Don't update the routine id, but do update the isPublic status, name, or goal, as necessary
-// Return the updated routine
+function dbFields(fields) {
+  const insert = Object.keys(fields)
+    .map((key, index) => `"${key}"=$${index + 1}`)
+    .join(", ");
 
-async function updateRoutine({ id, isPublic, name, goal }) {
+  const select = Object.keys(fields)
+    .map((_, index) => `$${index + 1}`)
+    .join(", ");
+
+  const vals = Object.values(fields);
+  return { insert, select, vals };
+}
+
+async function updateRoutine({ id, ...fields }) {
+  const { insert, select, vals } = dbFields(fields);
   try {
     const {
       rows: [updatedRoutine],
     } = await client.query(
       `
 UPDATE routines
-SET "isPublic" = $1, name = $2, goal = $3
+SET ${insert}
 WHERE "id" = ${id}
 RETURNING *;
 `,
-      [isPublic, name, goal]
+      vals
     );
 
     return updatedRoutine;
@@ -182,4 +209,7 @@ module.exports = {
   destroyRoutine,
   getAllRoutines,
   getAllPublicRoutines,
+  getAllRoutinesByUser,
+  getPublicRoutinesByUser,
+  getPublicRoutinesByActivity,
 };
