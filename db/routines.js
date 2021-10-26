@@ -49,7 +49,7 @@ SELECT routines.*, users.username AS "creatorName"
 FROM routines
 JOIN users ON routines."creatorId" = users.id;
 `);
-console.log (routines, "!!!!!!")
+
     return attachActivitiesToRoutines(routines);
   } catch (error) {
     console.error(error);
@@ -61,17 +61,15 @@ console.log (routines, "!!!!!!")
 async function getAllPublicRoutines() {
   try {
     const {
-      rows: [publicRoutines],
+      rows: publicRoutines,
     } = await client.query(`
-SELECT *
-FROM routines
-INNER JOIN routineActivities 
-ON routineActivities."routineId" = routines.id
-WHERE "isPublic" = true
-RETURNING *;
+    SELECT routines.*, users.username AS "creatorName"
+    FROM routines
+    WHERE "isPublic" = true
+    JOIN users ON routines."creatorId" = users.id;
 `);
     console.log(publicRoutines, "!!!!!");
-    return publicRoutines;
+    return attachActivitiesToRoutines(publicRoutines);
   } catch (error) {
     console.error(error);
   }
@@ -83,7 +81,9 @@ async function getAllRoutinesByUser({ username }) {
   try {
     const {
       rows: [userRoutines],
-    } = await client.query;
+    } = await client.query(`
+    
+    `);
   } catch (error) {
     console.error(error);
   }
