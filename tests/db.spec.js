@@ -128,7 +128,7 @@ describe('Database', () => {
         }));
       })
     })
-    xdescribe('getAllPublicRoutines', () => {
+    describe('getAllPublicRoutines', () => {
       let routine;
       beforeAll(async() => {
         [routine] = await getAllPublicRoutines();
@@ -297,7 +297,7 @@ describe('Database', () => {
       })
     })
   })
-  xdescribe('Routine Activities', () => {
+  describe('Routine Activities', () => {
     const routineActivityData = {
       routineId: 4,
       activityId: 8,
@@ -329,7 +329,7 @@ describe('Database', () => {
         const deletedRoutine = await destroyRoutineActivity(routineActivityToCreateAndUpdate.id);
         expect(deletedRoutine.id).toBe(routineActivityToCreateAndUpdate.id);
         const {rows} = await client.query(`
-          SELECT * FROM routine_activities
+          SELECT * FROM routineActivities
           WHERE id = ${deletedRoutine.id}
         `)
         expect(rows.length).toBe(0);

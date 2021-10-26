@@ -1,5 +1,5 @@
 const client = require("./client");
-
+const { attachActivitiesToRoutines } = require("./activities");
 // -getRoutineById
 // getRoutineById(id)
 // return the routine
@@ -40,26 +40,54 @@ FROM routines;
 
 // -getAllRoutines
 // select and return an array of all routines, include their activities
-// async function getAllRoutines() {
-//     try {
-//         const { rows: routines_activities } = await client.query(`
-// SELECT *,
-// FROM routines_activities;
-// INNER JOIN activities ON routines_activities."activityId" = activities.id
-// `);
-
-//     } catch (error) {
-//         console.error(error);
-//     }
-// }
+async function getAllRoutines() {
+  try {
+    const {
+      rows: routines,
+    } = await client.query(`
+SELECT routines.*, users.username AS "creatorName"
+FROM routines
+JOIN users ON routines."creatorId" = users.id;
+`);
+console.log (routines, "!!!!!!")
+    return attachActivitiesToRoutines(routines);
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 // -getAllPublicRoutines
 // select and return an array of public routines, include their activities
-
+async function getAllPublicRoutines() {
+  try {
+    const {
+      rows: [publicRoutines],
+    } = await client.query(`
+SELECT *
+FROM routines
+INNER JOIN routineActivities 
+ON routineActivities."routineId" = routines.id
+WHERE "isPublic" = true
+RETURNING *;
+`);
+    console.log(publicRoutines, "!!!!!");
+    return publicRoutines;
+  } catch (error) {
+    console.error(error);
+  }
+}
 // -getAllRoutinesByUser
 // getAllRoutinesByUser({ username })
 // select and return an array of all routines made by user, include their activities
-
+async function getAllRoutinesByUser({ username }) {
+  try {
+    const {
+      rows: [userRoutines],
+    } = await client.query;
+  } catch (error) {
+    console.error(error);
+  }
+}
 // -getPublicRoutinesByUser
 // getPublicRoutinesByUser({ username })
 // select and return an array of public routines made by user, include their activities
@@ -104,7 +132,7 @@ async function updateRoutine({ id, isPublic, name, goal }) {
     } = await client.query(
       `
 UPDATE routines
-SET "isPublic" = $1,name = $2,goal = $3
+SET "isPublic" = $1, name = $2, goal = $3
 WHERE "id" = ${id}
 RETURNING *;
 `,
@@ -126,19 +154,21 @@ async function destroyRoutine(id) {
     const {
       rows: [deleteRoutine],
     } = await client.query(
-    `DELETE 
+      `DELETE 
     FROM routines
     WHERE "id"=$1
-    RETURNING *`,
+    RETURNING *;`,
       [id]
     );
 
-    // await client.query(`
-    // DELETE 
-    // FROM routine_activities
-    // WHERE "routineId"=$1`, [id])
+    await client.query(
+      `DELETE
+      FROM routineActivities
+      WHERE "routineId"= $1;`,
+      [id]
+    );
 
-    // return deleteRoutine;
+    return deleteRoutine;
   } catch (error) {
     throw error;
   }
@@ -150,4 +180,6 @@ module.exports = {
   updateRoutine,
   getRoutinesWithoutActivities,
   destroyRoutine,
+  getAllRoutines,
+  getAllPublicRoutines,
 };
