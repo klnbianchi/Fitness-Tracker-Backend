@@ -8,6 +8,8 @@ const jwt = require ('jsonwebtoken');
 const {JWT_SECRET} = process.env;
 
 const usersRouter = require('./users');
+const activitesRouter= require('./activities');
+const activitiesRouter = require("./activities");
 
 apiRouter.use(async (req, res, next) => {
     const prefix = 'Bearer ';
@@ -48,6 +50,7 @@ apiRouter.get('/health', async (req, res)=>{
 
 
 apiRouter.use('/users', usersRouter);
+apiRouter.use('/activities', activitiesRouter);
 
 
 
