@@ -75,7 +75,7 @@ describe('API', () => {
         expect(tooShortResponse.data).toBeTruthy();
       });
     });
-    xdescribe('POST /users/login', () => {
+    describe('POST /users/login', () => {
       it('Logs in the user. Requires username and password, and verifies that hashed login password matches the saved hashed password.', async () => {
         const {data} = await axios.post(`${API_URL}/api/users/login`, newUser);
         token = data.token;
@@ -106,7 +106,7 @@ describe('API', () => {
         expect(noTokenErrResp.data).toBeTruthy();
       });
     });
-    xdescribe('GET /users/:username/routines', () => {
+    describe('GET /users/:username/routines', () => {
       it('Gets a list of public routines for a particular user.', async () => {
         const userId = 2;
         const userWithRoutines = await getUserById(userId);
@@ -117,7 +117,7 @@ describe('API', () => {
       });
     });
   });
-  xdescribe('Activities', () => {
+  describe('Activities', () => {
     let activityToCreateAndUpdate = { name: 'Bicep Curls', description: 'They hurt, but you will thank you later' };
     describe('GET /activities', () => {
       it('Just returns a list of all activities in the database', async () => {
