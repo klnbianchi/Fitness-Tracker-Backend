@@ -19,7 +19,6 @@ const {
 
 
 
-
 async function dropTables() {
   try {
     console.log('Dropping All Tables...');

@@ -4,10 +4,56 @@
 const express = require("express");
 const apiRouter = express.Router();
 
+const jwt = require ('jsonwebtoken');
+const {JWT_SECRET} = process.env;
+
+const usersRouter = require('./users');
+const activitesRouter= require('./activities');
+const activitiesRouter = require("./activities");
+
+apiRouter.use(async (req, res, next) => {
+    const prefix = 'Bearer ';
+    const auth = req.header('Authorization');
+  
+    if (!auth) {
+      next();
+    } else if (auth.startsWith(prefix)) {
+      const token = auth.slice(prefix.length);
+  
+      try {
+        const { id } = jwt.verify(token, JWT_SECRET);
+  
+        if (id) {
+          req.user = await getUserById(id);
+          next();
+        }
+      } catch ({ name, message }) {
+        next({ name, message });
+      }
+    } else {
+      next({
+        name: 'AuthorizationHeaderError',
+        message: `Authorization token must start with ${prefix}`
+      });
+    }
+  });
+
+  apiRouter.use('/users', usersRouter);
+apiRouter.use('/activities', activitiesRouter);
 
 // health check
 // GET /health
 // A common need is to see if our server is up (not completely crashed). We can create a route to send back a message, just a string saying all is well.
+
+apiRouter.get('/health', async (req, res)=>{
+    try{
+      res.send({message:"connected!"})
+    }catch(error){
+        console.error(error);
+        next(error)
+    }
+      
+  });
 
 // users
 // POST /users/register
@@ -63,4 +109,4 @@ const apiRouter = express.Router();
 // Remove an activity from a routine, use hard delete
 
 
-module.exports = apiRouter
+module.exports = apiRouter;
