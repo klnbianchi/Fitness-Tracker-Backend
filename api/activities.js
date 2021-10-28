@@ -7,7 +7,7 @@ getAllActivities,
 activitiesRouter.get('/', async (req, res, next)=>{
 try{
     const allActivities = await getAllActivities();
-    console.log(allActivities, "!!!!!!!!")
+    
     res.send(allActivities);
     
 }catch(error){

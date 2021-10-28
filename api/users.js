@@ -51,7 +51,7 @@ usersRouter.post('/login', async (req, res, next) => {
         const user = await getUser({username, password});
 
         if (user) {
-            const token = await jwt.sign({ id: user.id, username }, process.env.JWT_SECRET)
+            const token = jwt.sign({ id: user.id, username: username }, process.env.JWT_SECRET)
             res.send({ message: "you're logged in!", token: token });
         } else {
             next({
@@ -75,7 +75,7 @@ const {username} = req.params;
 
 try{
 const routines = await getPublicRoutinesByUser({username});
-res.send({routines});
+res.send(routines);
 
 }catch(error){
     console.log(error);
