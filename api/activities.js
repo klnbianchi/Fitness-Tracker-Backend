@@ -1,13 +1,14 @@
 const express = require("express");
 const activitiesRouter = express.Router();
 const{
-getAllActivities
+getAllActivities,
 }= require('../db')
 
 activitiesRouter.get('/', async (req, res, next)=>{
 try{
-    const allActivities = getAllActivities();
-    res.send({activities: allActivities})
+    const allActivities = await getAllActivities();
+    console.log(allActivities, "!!!!!!!!")
+    res.send(allActivities);
     
 }catch(error){
     console.log(error);
