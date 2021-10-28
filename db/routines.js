@@ -177,8 +177,9 @@ RETURNING *;
 // remove routine from database
 // Make sure to delete all the routine_activities whose routine is the one being deleted.
 async function destroyRoutine(id) {
+  
   try {
-   const{rows: deletedRA} = await client.query(
+   await client.query(
       `
     DELETE 
     FROM routineActivities
@@ -191,12 +192,13 @@ async function destroyRoutine(id) {
       `
     DELETE 
     FROM routines
-    WHERE routines.id = $1;
+    WHERE id = $1
+    RETURNING *;
     `,
       [id]
     );
 
-  return deletedRA, deletedRoutines;
+  return  deletedRoutines;
   } catch (error) {
     throw error;
   }

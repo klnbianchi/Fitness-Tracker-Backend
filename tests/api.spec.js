@@ -159,7 +159,7 @@ describe('API', () => {
       });
     });
   });
-  xdescribe('Routines', () => {
+  describe('Routines', () => {
     let routineToCreateAndUpdate = {isPublic: true, name: 'Elliptical Day', goal: 'Work on that Elliptical!'};
     let routineToFail = {isPublic: false, name: 'Elliptical Day 2', goal: 'Work on that Elliptical... again!'};
     const newRoutineData = {isPublic: false, name: 'Elliptical Day Private', goal: 'Work on that Elliptical, yet again!'}
@@ -210,7 +210,7 @@ describe('API', () => {
         expect(shouldBeDeleted).toBeFalsy();
       });
     });
-    describe('POST /routines/:routineId/activities', () => {
+    xdescribe('POST /routines/:routineId/activities', () => {
       let newRoutine
       it('Attaches a single activity to a routine.', async () => {
         newRoutine = await createRoutine({creatorId: registeredUser.id, name: 'Pull Ups', goal: '10 pull ups'})
