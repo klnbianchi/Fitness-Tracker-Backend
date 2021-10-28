@@ -5,6 +5,7 @@ const {
     getUserByUserName, 
     getUser,
     getPublicRoutinesByUser,
+    getUserById
  } = require("../db");
 const jwt = require('jsonwebtoken');
 
@@ -66,9 +67,25 @@ usersRouter.post('/login', async (req, res, next) => {
     }
 });
 
-// usersRouter.get('/me', async (req, res, next)=>{
-
-// });
+usersRouter.get('/me', async (req, res, next)=>{
+try{
+    const { id } = jwt.verify(token, JWT_SECRET);
+  
+    if (id) {
+      user = await getUserById(id);
+      res.send(user)
+    }
+    else{
+        next({
+            name: 'missingToken',
+            message: 'Please supply a valid token'
+        });
+    }
+}catch(error){
+    console.error(error);
+    next(error);
+}
+});
 
 usersRouter.get('/:username/routines', async (req, res, next)=>{
 const {username} = req.params;
