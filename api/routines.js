@@ -14,6 +14,8 @@ const {
   getPublicRoutinesByUser,
   getPublicRoutinesByActivity,
   destroyRoutineActivity,
+  attachActivitiesToRoutines,
+  getActivityById,
 } = require(`../db`);
 
 const { requireUser } = require("./utils");
@@ -23,9 +25,8 @@ routinesRouter.get("/", async (req, res, next) => {
     const allPublicRoutines = await getAllPublicRoutines();
 
     res.send(allPublicRoutines);
-  } catch (error) {
-    console.log(error);
-    next(error);
+  } catch ({ name, message }) {
+    next({ name, message });
   }
 });
 
@@ -65,10 +66,10 @@ routinesRouter.patch("/:routineId", requireUser, async (req, res, next) => {
 
 routinesRouter.delete("/:routineId", requireUser, async (req, res, next) => {
   const { routineId } = req.params;
-  console.log(req.params);
+
   try {
     const routineToDelete = await getRoutineById(routineId);
-    console.log(routineToDelete, "routine to delete");
+
     if (!routineToDelete) {
       next({
         name: "Routine does not exist",
@@ -79,9 +80,23 @@ routinesRouter.delete("/:routineId", requireUser, async (req, res, next) => {
       next({ name: "User Issue", messsage: "You are not the user!" });
     } else {
       const deletedRoutine = await destroyRoutine(routineId);
-      console.log(deletedRoutine, 'deletedRoutine');
+
       res.send({ ...deletedRoutine, success: true });
     }
+  } catch ({ name, message }) {
+    next({ name, message });
+  }
+});
+
+routinesRouter.post("/:routineId/activities", async (req, res, next) => {
+  const { routineId: id } = req.params;
+
+  try {
+    const routineToUpdate = await getRoutineById(id);
+    const routineWithActivity = await attachActivitiesToRoutines(
+      routineToUpdate
+    );
+    res.send(routineWithActivity);
   } catch ({ name, message }) {
     next({ name, message });
   }

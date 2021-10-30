@@ -1,22 +1,19 @@
-// create an api router
-// attach other routers from files in this api directory (users, activities...)
-// export the api router
 const express = require("express");
 const apiRouter = express.Router();
 
-const jwt = require ('jsonwebtoken');
-const {JWT_SECRET} = process.env;
+const jwt = require("jsonwebtoken");
+const { JWT_SECRET } = process.env;
 
-const {getUserById} = require('../db')
-const usersRouter = require('./users');
-const activitiesRouter= require('./activities');
-const routinesRouter = require('./routines');
+const { getUserById } = require("../db");
+const usersRouter = require("./users");
+const activitiesRouter = require("./activities");
+const routinesRouter = require("./routines");
 
 apiRouter.use(async (req, res, next) => {
-  const prefix = 'Bearer ';
-  const auth = req.header('Authorization');
+  const prefix = "Bearer ";
+  const auth = req.header("Authorization");
 
-  if (!auth) { // nothing to see here
+  if (!auth) {
     next();
   } else if (auth.startsWith(prefix)) {
     const token = auth.slice(prefix.length);
@@ -33,8 +30,8 @@ apiRouter.use(async (req, res, next) => {
     }
   } else {
     next({
-      name: 'AuthorizationHeaderError',
-      message: `Authorization token must start with ${ prefix }`
+      name: "AuthorizationHeaderError",
+      message: `Authorization token must start with ${prefix}`,
     });
   }
 });
@@ -47,20 +44,16 @@ apiRouter.use((req, res, next) => {
   next();
 });
 
-apiRouter.use('/users', usersRouter);
-apiRouter.use('/activities', activitiesRouter);
-apiRouter.use('/routines', routinesRouter);
+apiRouter.use("/users", usersRouter);
+apiRouter.use("/activities", activitiesRouter);
+apiRouter.use("/routines", routinesRouter);
 
-
-apiRouter.get('/health', async (req, res)=>{
-    try{
-      res.send({message:"connected!"})
-    }catch(error){
-        console.error(error);
-        next(error)
-    }
-      
-  });
-
+apiRouter.get("/health", async (req, res) => {
+  try {
+    res.send({ message: "connected!" });
+  } catch ({ name, message }) {
+    next({ name, message });
+  }
+});
 
 module.exports = apiRouter;
