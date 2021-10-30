@@ -210,7 +210,7 @@ describe('API', () => {
         expect(shouldBeDeleted).toBeFalsy();
       });
     });
-    xdescribe('POST /routines/:routineId/activities', () => {
+ describe('POST /routines/:routineId/activities', () => {
       let newRoutine
       it('Attaches a single activity to a routine.', async () => {
         newRoutine = await createRoutine({creatorId: registeredUser.id, name: 'Pull Ups', goal: '10 pull ups'})
@@ -231,7 +231,7 @@ describe('API', () => {
       });
     });
   });
-  xdescribe('routine_activities', () => {
+  describe('routine_activities', () => {
     let newRoutineActivityData = {routineId: 3, activityId: 8, count: 25, duration: 200};
     describe('PATCH /routine_activities/:routineActivityId (**)', () => {
       it('Updates the count or duration on the routine activity', async () => {
@@ -243,7 +243,7 @@ describe('API', () => {
       it('Logged in user should be the owner of the modified object.', async () => {
         let respondedRoutineActivity, errRespondedRoutineActivity;
         try {
-          respondedRoutineActivity = await axios.patch(`${API_URL}/api/routine_activities/${4}`, newRoutineActivityData, { headers: {'Authorization': `Bearer ${token}`} });
+          respondedRoutineActivity = await axios.patch(`${API_URL}/api/routine_activities/${3}`, newRoutineActivityData, { headers: {'Authorization': `Bearer ${token}`} });
         } catch(err) {
           errRespondedRoutineActivity = err.response;
         }
@@ -263,7 +263,7 @@ describe('API', () => {
       it('Logged in user should be the owner of the modified object.', async () => {
         let respondedRoutineActivity, errRespondedRoutineActivity;
         try {
-          respondedRoutineActivity = await axios.delete(`${API_URL}/api/routine_activities/${4}`, { headers: {'Authorization': `Bearer ${token}`} });
+          respondedRoutineActivity = await axios.delete(`${API_URL}/api/routine_activities/${3}`, { headers: {'Authorization': `Bearer ${token}`} });
         } catch(err) {
           errRespondedRoutineActivity = err.response;
         }

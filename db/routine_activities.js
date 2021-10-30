@@ -6,9 +6,9 @@ async function getRoutineActivityById(id) {
       rows: [routineActivity],
     } = await client.query(`
           SELECT *
-          FROM routineActivity
-          WHERE "id" = ${id};
-        `);
+          FROM routineActivities
+          WHERE "id" = $1;
+        `, [id]);
     return routineActivity;
   } catch (error) {
     console.error(error);
@@ -77,11 +77,9 @@ async function destroyRoutineActivity(id) {
   }
 }
 
-async function getRoutineActivitiesByRoutine({id}) {
+async function getRoutineActivitiesByRoutine({ id }) {
   try {
-    const {
-      rows: routineActivities,
-    } = await client.query(
+    const { rows: routineActivities } = await client.query(
       `
 SELECT *
 FROM routineActivities

@@ -1,8 +1,6 @@
-// require and re-export all files in this db directory (users, activities...)
 module.exports = {
-    ...require('./users'), // adds key/values from users.js
-    ...require('./activities'), // adds key/values from activites.js
-    ...require('./routines'), // etc
-    ...require('./routine_activities'), // etc
-  
-  }
+  ...require("./users"),
+  ...require("./activities"),
+  ...require("./routines"),
+  ...require("./routine_activities"),
+};
