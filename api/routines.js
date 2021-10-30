@@ -2,20 +2,13 @@ const express = require("express");
 const routinesRouter = express.Router();
 
 const {
-  getUserById,
   createRoutine,
   getRoutineById,
   updateRoutine,
-  getRoutinesWithoutActivities,
   destroyRoutine,
-  getAllRoutines,
   getAllPublicRoutines,
-  getAllRoutinesByUser,
-  getPublicRoutinesByUser,
-  getPublicRoutinesByActivity,
-  destroyRoutineActivity,
-  attachActivitiesToRoutines,
-  getActivityById,
+  addActivityToRoutine,
+  getRoutineActivitiesByRoutine,
 } = require(`../db`);
 
 const { requireUser } = require("./utils");
@@ -89,17 +82,39 @@ routinesRouter.delete("/:routineId", requireUser, async (req, res, next) => {
 });
 
 routinesRouter.post("/:routineId/activities", async (req, res, next) => {
-  const { routineId: id } = req.params;
+  const { routineId } = req.params;
+  const { activityId, count, duration } = req.body;
 
   try {
-    const routineToUpdate = await getRoutineById(id);
-    const routineWithActivity = await attachActivitiesToRoutines(
-      routineToUpdate
-    );
-    res.send(routineWithActivity);
+    const activity = await getRoutineActivitiesByRoutine({ id: routineId });
+    const filteredActivities = activity.filter(activities => {
+      if (activities.activityId === activityId) {
+        return true
+      }
+      return false;
+    })
+
+    if (filteredActivities.length) {
+      next({
+        name: "duplicate id",
+        message: "activity id already exists"
+      });
+
+    } else {
+      const routineWithActivity = await addActivityToRoutine({
+        routineId,
+        activityId,
+        count,
+        duration,
+      }
+      );
+      res.send(routineWithActivity);
+    }
   } catch ({ name, message }) {
     next({ name, message });
   }
 });
+
+
 
 module.exports = routinesRouter;

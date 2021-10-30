@@ -6,9 +6,9 @@ async function getRoutineActivityById(id) {
       rows: [routineActivity],
     } = await client.query(`
           SELECT *
-          FROM routineActivity
-          WHERE "id" = ${id};
-        `);
+          FROM routineActivities
+          WHERE "id" = $1;
+        `, [id]);
     return routineActivity;
   } catch (error) {
     console.error(error);

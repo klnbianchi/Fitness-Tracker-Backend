@@ -18,7 +18,7 @@ activitiesRouter.get("/", async (req, res, next) => {
   }
 });
 
-activitiesRouter.post("/", async (req, res, next) => {
+activitiesRouter.post("/", requireUser, async (req, res, next) => {
   const { name, description } = req.body;
   try {
     const newActivity = await createActivity({ name, description });
@@ -49,4 +49,5 @@ activitiesRouter.get("/:activityId/routines", async (req, res, next) => {
     next({ name, message });
   }
 });
+
 module.exports = activitiesRouter;

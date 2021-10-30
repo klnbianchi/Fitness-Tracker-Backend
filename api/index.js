@@ -8,6 +8,7 @@ const { getUserById } = require("../db");
 const usersRouter = require("./users");
 const activitiesRouter = require("./activities");
 const routinesRouter = require("./routines");
+const routineActivitiesRouter = require('./routine_activities');
 
 apiRouter.use(async (req, res, next) => {
   const prefix = "Bearer ";
@@ -36,8 +37,10 @@ apiRouter.use(async (req, res, next) => {
   }
 });
 
-apiRouter.use((req, res, next) => {
-  if (req.user) {
+apiRouter.use((req, res, next, err) => {
+  if (!req.user) {
+    res.send({err})
+  } else {
     console.log("User is set:", req.user);
   }
 
@@ -47,6 +50,7 @@ apiRouter.use((req, res, next) => {
 apiRouter.use("/users", usersRouter);
 apiRouter.use("/activities", activitiesRouter);
 apiRouter.use("/routines", routinesRouter);
+apiRouter.use("/routine_activities", routineActivitiesRouter);
 
 apiRouter.get("/health", async (req, res) => {
   try {
